@@ -34,10 +34,10 @@ public class JFramePrincipal extends javax.swing.JFrame {
     //Datos del usuario utilizados globalmente
     //Estos datos se obtienen del constructor, el cual
     //fue invocado en el frame anterior(login)
-    private String usuario;
+    private String correo;
     private String contraseña;
-    private String host;
-    private int port;
+    private String smtpHost;
+    private int smtpPort;
     
     //La variable que indica la locación del archivo
     private String path = "";
@@ -51,6 +51,7 @@ public class JFramePrincipal extends javax.swing.JFrame {
     private BodyPart messageBodyPart;
     private Multipart multipart;
     
+    //El frame anterior por si el usuario desea ingresar sus credenciales de nuevo
     private JFrameLogin login;
     
     /**
@@ -64,24 +65,24 @@ public class JFramePrincipal extends javax.swing.JFrame {
         
         //Se guardan los datos del constructor en variables globales
         //para ser utilizados en los botones
-        usuario = usr;
+        correo = usr;
         contraseña = con;
-        host = hos;
-        port = por;
+        smtpHost = hos;
+        smtpPort = por;
         
         //Propiedades para conectarse y autenticarse
         props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", port);
+        props.put("mail.smtp.host", smtpHost);
+        props.put("mail.smtp.port", smtpPort);
 
 
         //Se crea la sesión con la autenticación
         session = Session.getInstance(props, new Authenticator(){
             @Override
             protected PasswordAuthentication getPasswordAuthentication(){
-                return new PasswordAuthentication(usuario, contraseña);
+                return new PasswordAuthentication(correo, contraseña);
             }
         });
 
@@ -236,7 +237,7 @@ public class JFramePrincipal extends javax.swing.JFrame {
         
         try {
             //El usuario que envía el mensake
-            msg.setFrom(new InternetAddress(usuario));
+            msg.setFrom(new InternetAddress(correo));
             
             //Se añade la cuenta de la persona a la que se le va a 
             //enviar el mensaje
@@ -285,7 +286,7 @@ public class JFramePrincipal extends javax.swing.JFrame {
             msg.setContent(multipart);
             
             //Se envía el mensake
-            Transport.send(msg, usuario, contraseña);
+            Transport.send(msg, correo, contraseña);
             
             JOptionPane.showMessageDialog(this, "Enviado exitosamente");
             
