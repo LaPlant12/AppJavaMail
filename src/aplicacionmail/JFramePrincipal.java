@@ -5,12 +5,14 @@
  */
 package aplicacionmail;
 
+import java.awt.Color;
 import java.io.File;
 import java.util.Date;
 import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -58,8 +60,8 @@ public class JFramePrincipal extends javax.swing.JFrame {
      * Creates new form JFrame
      */
     //Añade los datos pasados del login para utilizarlos en el mail
-    public JFramePrincipal(String usr, String con, String hos, int por, JFrameLogin fr) {
-        this.setTitle("JavaMail");
+    public JFramePrincipal(String usr, String con, String hos, int por, JFrameLogin fr, boolean isDark) {
+        this.setTitle("JavaMail Ver: 2.0");
         
         login = fr;
         
@@ -90,6 +92,10 @@ public class JFramePrincipal extends javax.swing.JFrame {
         msg = new MimeMessage(session);
         
         initComponents();
+        
+        if(isDark){
+            setDarkMode();
+        }
     }
     
     /**
@@ -226,13 +232,64 @@ public class JFramePrincipal extends javax.swing.JFrame {
                     .addComponent(jButtonArchivo)
                     .addComponent(jButtonEnviar))
                 .addGap(17, 17, 17)
-                .addComponent(jLabelPath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabelPath, javax.swing.GroupLayout.DEFAULT_SIZE, 10, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setDarkMode(){ //NUEVO EN VERSIÓN 2.0
+        //Fondos
+        this.getContentPane().setBackground(Color.DARK_GRAY);
+        
+        //Botones y fields
+        jTextFieldPara.setBackground(Color.GRAY);
+        jTextFieldCC.setBackground(Color.GRAY);
+        jTextFieldCCO.setBackground(Color.GRAY);
+        jTextFieldEncabezado.setBackground(Color.GRAY);
+        jTextAreaContenido.setBackground(Color.GRAY);
+        
+        jButtonArchivo.setBackground(Color.GRAY);
+        jButtonAtras.setBackground(Color.GRAY);
+        jButtonEnviar.setBackground(Color.GRAY);
+        
+        //Texto
+        jLabel2.setForeground(Color.white);
+        jLabel3.setForeground(Color.white);
+        jLabel4.setForeground(Color.white);
+        jLabel5.setForeground(Color.white);
+        jLabelPath.setForeground(Color.white);
+        
+        jTextFieldPara.setForeground(Color.WHITE);
+        jTextFieldCC.setForeground(Color.WHITE);
+        jTextFieldCCO.setForeground(Color.WHITE);
+        jTextFieldEncabezado.setForeground(Color.WHITE);
+        jTextAreaContenido.setForeground(Color.WHITE);
+        
+        jButtonArchivo.setForeground(Color.WHITE);
+        jButtonAtras.setForeground(Color.WHITE);
+        jButtonEnviar.setForeground(Color.WHITE);
+    }
+    
+    public InternetAddress[] convertirArregloAddress(String addresses){
+        addresses = addresses.trim();
+        
+        String[] arregloString = addresses.split(",");
+        
+        InternetAddress[] ia = new InternetAddress[arregloString.length];
+        
+        try{
+            for (int i = 0; i < arregloString.length; i++)
+                ia[i] = new InternetAddress(arregloString[i]);
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        
+        return ia;
+    }
+    
     private void jButtonEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEnviarActionPerformed
         
         try {
@@ -244,11 +301,11 @@ public class JFramePrincipal extends javax.swing.JFrame {
             msg.setRecipients(Message.RecipientType.TO, jTextFieldPara.getText()); //Añadir destinatario
             
             //En caso de existir, se añaden los CC y CCO, solo se puede uno
-            if(jTextFieldCC.getText() != "")
-                msg.setRecipients(Message.RecipientType.CC, jTextFieldCC.getText());
+            if(!jTextFieldCC.getText().equals(""))
+                msg.setRecipients(Message.RecipientType.CC, convertirArregloAddress(jTextFieldCC.getText()));
             
-            if(jTextFieldCCO.getText() != "")
-                msg.setRecipients(Message.RecipientType.BCC, jTextFieldCCO.getText());
+            if(!jTextFieldCCO.getText().equals(""))
+                msg.setRecipients(Message.RecipientType.BCC,convertirArregloAddress(jTextFieldCCO.getText()));
             
             //Se añade el encabezado
             msg.setSubject(jTextFieldEncabezado.getText());
@@ -272,12 +329,14 @@ public class JFramePrincipal extends javax.swing.JFrame {
             //lógica para enviar archivo
             //Solo se ejecuta esta parte si se ha cargado un archivo
             //es decir, si la variable path lleva a un archivo
-            if(path != ""){
+            if(!path.equals("")){
                 //se crea otra sección del mensaje ahora con el archivo
                 messageBodyPart = new MimeBodyPart();
                 DataSource source = new FileDataSource(path);
                 messageBodyPart.setDataHandler(new DataHandler(source));
-                messageBodyPart.setFileName(path);
+                
+                //File name bonito
+                messageBodyPart.setFileName(path.substring(path.lastIndexOf("\\") + 1));
                 //se añade al multipart
                 multipart.addBodyPart(messageBodyPart);
             }

@@ -9,6 +9,10 @@ package aplicacionmail;
 /**
  *
  * @author david
+ * 
+ * Alumno: David García León
+ * No: 19130911
+ * Fecha : 5 Feb 2021
  */
 public class AplicacionMail {
 

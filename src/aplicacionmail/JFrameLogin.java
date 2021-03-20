@@ -5,6 +5,12 @@
  */
 package aplicacionmail;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 /**
@@ -12,13 +18,49 @@ import javax.swing.JOptionPane;
  * @author david
  */
 public class JFrameLogin extends javax.swing.JFrame {
+    File usr;
+    String contraseña = "";
+    boolean isDark = false;
     JFramePrincipal principal;
+    
+    //-------NUEVO EN VERSIÓN 2.0-------
+    //color default del frame:
+    Color colorNormal = new Color(238,238,238,255);
+        
+    //color de boton
+    Color colorBoton;
     /**
      * Creates new form JFrameLogin
      */
     public JFrameLogin() {
-        
         initComponents();
+        colorBoton = jButtonIngresar.getBackground();
+        
+        //Crea archivo para recordar usuario si es que no existe
+       try{
+            usr = new File("usuario.txt");
+            
+            if(usr.createNewFile())
+                System.out.println("Se creó archivo " + usr.getName());
+            else{
+                System.out.println("Archivo ya creado, se leerá...");
+                
+                Scanner scan = new Scanner(usr);
+                String[] datosUsuario = scan.nextLine().split("/");
+                
+                //debug
+                for(String s : datosUsuario)
+                    System.out.println(s);
+                
+                jTextFieldCorreo.setText(datosUsuario[0]);
+                jPasswordField.setText(datosUsuario[1]);
+                jComboBox.setSelectedIndex(Integer.parseInt(datosUsuario[2]));
+                scan.close();
+            }
+            
+        }catch(IOException e){
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
     /**
@@ -37,6 +79,8 @@ public class JFrameLogin extends javax.swing.JFrame {
         jComboBox = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jButtonIngresar = new javax.swing.JButton();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButtonRecordar = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -54,7 +98,7 @@ public class JFrameLogin extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Corbel", 1, 24)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Login");
+        jLabel3.setText("Iniciar sesión");
 
         jButtonIngresar.setText("Ingresar");
         jButtonIngresar.addActionListener(new java.awt.event.ActionListener() {
@@ -63,36 +107,57 @@ public class JFrameLogin extends javax.swing.JFrame {
             }
         });
 
+        jRadioButton1.setText("Tema oscuro");
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
+            }
+        });
+
+        jRadioButtonRecordar.setText("Recordar usuario");
+        jRadioButtonRecordar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonRecordarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextFieldCorreo)
-                            .addComponent(jPasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jComboBox, 0, 139, Short.MAX_VALUE)
-                            .addComponent(jButtonIngresar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(0, 74, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(88, 88, 88))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(196, 196, 196)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(25, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jRadioButtonRecordar)
+                                .addGap(141, 141, 141)
+                                .addComponent(jRadioButton1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel1))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextFieldCorreo)
+                                    .addComponent(jPasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jComboBox, 0, 139, Short.MAX_VALUE)
+                                    .addComponent(jButtonIngresar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addContainerGap(30, Short.MAX_VALUE)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextFieldCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -103,7 +168,11 @@ public class JFrameLogin extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jButtonIngresar)))
-                .addGap(18, 18, 18))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRadioButtonRecordar)
+                    .addComponent(jRadioButton1))
+                .addGap(26, 26, 26))
         );
 
         pack();
@@ -116,8 +185,6 @@ public class JFrameLogin extends javax.swing.JFrame {
     private void jButtonIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIngresarActionPerformed
         //obtener datos
         //Proveedor se elige del combo box
-        //En teoría debería de funcionar con todos, sin embargo solo gmail
-        //Permite activar la configuración que permite que esto funcione
         
         String proveedor = jComboBox.getSelectedItem().toString();
         String correo = jTextFieldCorreo.getText() + proveedor;
@@ -125,13 +192,17 @@ public class JFrameLogin extends javax.swing.JFrame {
         //jPasswordField regresa un arreglo de chars con la contraseña
         //Este codigo recorre dicho arreglo y lo traduce a un String
         char [] arregloContraseña = jPasswordField.getPassword();
-        String contraseña = "";
+        
         for(char c : arregloContraseña)
             contraseña += c;    
         
         //Obtener el puerto y el host correspondiente
         //Nuevamente, estos ports y hosts si funcionan, pero las configuraciones
         //de los proveedores no permiten que lo hagan, solo gmail
+        
+        //-------NUEVO EN VERSIÓN 2.0-------
+        //Ya se pueden mandar mails desde cualquier proveedor
+        
         String smtpHost = "";
         int smtpPort = 587;
         
@@ -139,11 +210,11 @@ public class JFrameLogin extends javax.swing.JFrame {
             case "@gmail.com" : smtpHost = "smtp.gmail.com";
             smtpPort = 587; break;
             
-            case "@outlook.com" : smtpHost = "smtp.live.com";
+            case "@outlook.com" : smtpHost = "smtp-mail.outlook.com";
             smtpPort = 587; break;
             
-            case "@hotmail.com" : smtpHost = "smtp.live.com";
-            smtpPort = 465; break;
+            case "@hotmail.com" : smtpHost = "smtp-mail.outlook.com";
+            smtpPort = 587; break;
             
             case "@yahoo.com" : smtpHost = "smtp.mail.yahoo.com";
             smtpPort = 465; break;
@@ -151,12 +222,113 @@ public class JFrameLogin extends javax.swing.JFrame {
         
         System.out.println("usuario: "+correo+"  contraseña: "+contraseña);
         
+        //-------NUEVO EN VERSIÓN 2.0-------
+        //Ejecutar método recordarUsuario si es que activa el radiobutton
+        if(jRadioButtonRecordar.isSelected())
+            recordarUsuario();
+        
         //Se construye el siguiente frame poniéndole como parámetros
         //los datos obtenidos aquí para que se puedan transportar
-        principal = new JFramePrincipal(correo, contraseña, smtpHost, smtpPort, this);
+        principal = new JFramePrincipal(correo, contraseña, smtpHost, smtpPort, this, isDark);
         this.setVisible(false);
         principal.setVisible(true);
     }//GEN-LAST:event_jButtonIngresarActionPerformed
+
+    public void recordarUsuario(){
+        //Borrar archivo
+        if(usr.delete())
+            System.out.println("usuario.txt borrado");
+        else
+            System.out.println("No se pudo borrar usuario.txt");
+        
+        //Vuelve a crear archivo 
+        usr = new File("usuario.txt");
+        try{
+            usr = new File("usuario.txt");
+            
+            if(usr.createNewFile())
+                System.out.println("Se creó archivo " + usr.getName());
+            else
+                System.out.println("Archivo ya creado");
+            
+        }catch(IOException e){
+            System.out.println("Error: " + e.getMessage());
+        } 
+        
+        //Escribir en el archivo los datos del usuario
+        try{
+            FileWriter fw = new FileWriter("usuario.txt");
+            fw.write(jTextFieldCorreo.getText() + "/");
+            fw.write(contraseña + "/");
+            fw.write(jComboBox.getSelectedIndex() + "");
+            fw.close();
+        }catch(IOException e){
+            System.out.println("error: "+ e.getMessage());
+        }
+    }
+    
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+        
+        //-------NUEVO EN VERSIÓN 2.0-------
+        isDark = jRadioButton1.isSelected();
+        
+        if(isDark){
+            //Fondos
+            this.getContentPane().setBackground(Color.DARK_GRAY);
+            jRadioButton1.setBackground(Color.DARK_GRAY);
+            jRadioButtonRecordar.setBackground(Color.DARK_GRAY);
+            jComboBox.setBackground(Color.DARK_GRAY);
+            
+            //Botones y fields
+            jTextFieldCorreo.setBackground(Color.GRAY);
+            jPasswordField.setBackground(Color.GRAY);
+            jButtonIngresar.setBackground(Color.GRAY);
+            
+            //Texto
+            jRadioButton1.setForeground(Color.white);
+            jRadioButtonRecordar.setForeground(Color.white);
+            jLabel1.setForeground(Color.white);
+            jLabel2.setForeground(Color.white);
+            jLabel3.setForeground(Color.white);
+            jComboBox.setForeground(Color.white);
+            
+            //Textos de botones y fields
+            jButtonIngresar.setForeground(Color.white);
+            jTextFieldCorreo.setForeground(Color.white);
+            jPasswordField.setForeground(Color.white);
+        }
+        else{
+            //Fondos
+            this.getContentPane().setBackground(colorNormal);
+            jRadioButton1.setBackground(colorNormal);
+            jRadioButtonRecordar.setBackground(colorNormal);
+            jRadioButtonRecordar.setBackground(colorNormal);
+            jComboBox.setBackground(colorNormal);
+            
+            //Botones y fields
+            jTextFieldCorreo.setBackground(Color.white);
+            jPasswordField.setBackground(Color.white);
+            jButtonIngresar.setBackground(colorBoton);
+            
+            //Textos
+            jRadioButton1.setForeground(Color.black);
+            jRadioButtonRecordar.setForeground(Color.black);
+            jLabel1.setForeground(Color.black);
+            jLabel2.setForeground(Color.black);
+            jLabel3.setForeground(Color.black);
+            jComboBox.setForeground(Color.black);
+            
+            //Textos de botones y fields
+            jButtonIngresar.setForeground(Color.black);
+            jTextFieldCorreo.setForeground(Color.black);
+            jPasswordField.setForeground(Color.black);
+
+        }
+    }//GEN-LAST:event_jRadioButton1ActionPerformed
+
+    private void jRadioButtonRecordarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonRecordarActionPerformed
+        
+    }//GEN-LAST:event_jRadioButtonRecordarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -200,6 +372,8 @@ public class JFrameLogin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPasswordField jPasswordField;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButtonRecordar;
     private javax.swing.JTextField jTextFieldCorreo;
     // End of variables declaration//GEN-END:variables
 }
